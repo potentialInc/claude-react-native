@@ -1091,7 +1091,7 @@ const shadowStyle = Platform.select({
 
 - [Component Patterns](component-patterns.md) - React Native component architecture
 - [Styling Guide](styling-guide.md) - NativeWind patterns
-- [Routing Guide](routing-guide.md) - React Navigation setup
+- [Navigation Guide](navigation-guide.md) - React Navigation setup
 - [TypeScript Standards](typescript-standards.md) - Type definitions
 - [Common Patterns](common-patterns.md) - Reusable patterns
 - [Complete Examples](complete-examples.md) - Full working examples

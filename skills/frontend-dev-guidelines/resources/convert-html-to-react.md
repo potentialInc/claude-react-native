@@ -449,7 +449,7 @@ const days = ['일', '월', '화', '수', '목', '금', '토'];
 ## See Also
 
 - [Component Patterns](component-patterns.md) - React component architecture
-- [Routing Guide](routing-guide.md) - React Router 7 patterns
+- [Navigation Guide](navigation-guide.md) - React Navigation patterns
 - [Common Patterns](common-patterns.md) - Forms with React Hook Form + Zod
 - [Styling Guide](styling-guide.md) - Tailwind CSS usage
 - [TypeScript Standards](typescript-standards.md) - Type definitions

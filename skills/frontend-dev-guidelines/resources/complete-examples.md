@@ -962,4 +962,4 @@ export async function loginAction(
 - [component-patterns.md](component-patterns.md) - Shadcn/UI patterns
 - [data-fetching.md](data-fetching.md) - Axios + Redux patterns
 - [common-patterns.md](common-patterns.md) - Forms and auth patterns
-- [routing-guide.md](routing-guide.md) - React Router 7 patterns
+- [navigation-guide.md](navigation-guide.md) - React Navigation patterns

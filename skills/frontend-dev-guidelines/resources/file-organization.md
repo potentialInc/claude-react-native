@@ -334,4 +334,4 @@ import { MySubComponent } from './MySubComponent';
 
 - [Component Patterns](component-patterns.md) - How to structure components
 - [Data Fetching](data-fetching.md) - Service layer patterns
-- [Routing Guide](routing-guide.md) - Route organization
+- [Navigation Guide](navigation-guide.md) - Navigation setup

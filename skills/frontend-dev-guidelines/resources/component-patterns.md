@@ -1,6 +1,6 @@
 # Component Patterns
 
-Modern React Native component architecture using NativeWind, React Native Paper, and TypeScript.
+Modern React Native component architecture using React Native Paper, NativeWind, and TypeScript.
 
 ---
 
@@ -14,13 +14,12 @@ All components use function components with TypeScript for:
 - Consistent component signatures
 - Clear prop interface documentation
 - Better IDE autocomplete
-- Hooks-based state and effects
 
 ### Basic Pattern
 
 ```typescript
-import { View, Text, Pressable } from 'react-native';
-import { cn } from '@/lib/utils';
+import { View, Text } from 'react-native';
+import { Button } from 'react-native-paper';
 
 interface MyComponentProps {
   /** User ID to display */
@@ -32,10 +31,10 @@ interface MyComponentProps {
 export default function MyComponent({ userId, onAction }: MyComponentProps) {
   return (
     <View className="p-4">
-      <Text className="text-base text-foreground">User: {userId}</Text>
-      <Pressable onPress={onAction} className="bg-primary p-3 rounded-lg mt-2">
-        <Text className="text-white text-center">Action</Text>
-      </Pressable>
+      <Text className="text-foreground">User: {userId}</Text>
+      <Button mode="contained" onPress={onAction}>
+        Action
+      </Button>
     </View>
   );
 }
@@ -47,126 +46,34 @@ export default function MyComponent({ userId, onAction }: MyComponentProps) {
 - Destructure props in parameters
 - Default export at bottom
 - Use NativeWind classes for styling
-- Use `Pressable` for touch interactions
+- Use React Native Paper components for UI elements
 
 ---
 
-## React Native Core Components
+## React Native Paper Component Usage
 
-### Touchable Components
+### Available Components
 
-```typescript
-import { Pressable, TouchableOpacity, TouchableHighlight } from 'react-native';
-
-// Pressable (RECOMMENDED) - Most flexible
-<Pressable
-  onPress={handlePress}
-  className={({ pressed }) => cn(
-    'p-4 rounded-lg bg-primary',
-    pressed && 'opacity-70'
-  )}
->
-  <Text>Press Me</Text>
-</Pressable>
-
-// TouchableOpacity - Simple opacity feedback
-<TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
-  <Text>Touch Me</Text>
-</TouchableOpacity>
-
-// TouchableHighlight - Background highlight feedback
-<TouchableHighlight onPress={handlePress} underlayColor="#ddd">
-  <View className="p-4">
-    <Text>Highlight Me</Text>
-  </View>
-</TouchableHighlight>
-```
-
-### Text Component
+React Native Paper provides Material Design components:
 
 ```typescript
-import { Text } from 'react-native';
+// Buttons
+import { Button, FAB, IconButton } from 'react-native-paper';
 
-// Basic text
-<Text className="text-base text-foreground">Regular text</Text>
+// Forms
+import { TextInput, Checkbox, Switch, RadioButton } from 'react-native-paper';
 
-// Styled text
-<Text className="text-xl font-bold text-primary">Heading</Text>
+// Cards & Containers
+import { Card, Surface } from 'react-native-paper';
 
-// Text with number of lines
-<Text numberOfLines={2} className="text-sm text-muted-foreground">
-  Long text that might overflow...
-</Text>
+// Feedback
+import { Snackbar, Dialog, Portal, ActivityIndicator } from 'react-native-paper';
 
-// Selectable text
-<Text selectable className="text-base">
-  User can copy this text
-</Text>
-```
+// Navigation
+import { Appbar, BottomNavigation } from 'react-native-paper';
 
-### View and SafeAreaView
-
-```typescript
-import { View, SafeAreaView } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-
-// Screen with safe area
-export default function MyScreen() {
-  return (
-    <SafeAreaView className="flex-1 bg-background">
-      <View className="flex-1 p-4">
-        {/* Screen content */}
-      </View>
-    </SafeAreaView>
-  );
-}
-
-// In root layout
-export default function RootLayout() {
-  return (
-    <SafeAreaProvider>
-      {/* App content */}
-    </SafeAreaProvider>
-  );
-}
-```
-
-### ScrollView and FlatList
-
-```typescript
-import { ScrollView, FlatList, RefreshControl } from 'react-native';
-
-// ScrollView for small lists or mixed content
-<ScrollView
-  className="flex-1"
-  contentContainerClassName="p-4 gap-4"
-  showsVerticalScrollIndicator={false}
->
-  {/* Content */}
-</ScrollView>
-
-// FlatList for long lists (virtualized)
-<FlatList
-  data={items}
-  keyExtractor={(item) => item.id}
-  renderItem={({ item }) => <ItemCard item={item} />}
-  contentContainerClassName="p-4 gap-4"
-  showsVerticalScrollIndicator={false}
-  refreshControl={
-    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-  }
-  ListEmptyComponent={<EmptyState />}
-/>
-```
-
----
-
-## React Native Paper Components
-
-### Installation
-
-```bash
-npm install react-native-paper react-native-vector-icons
+// Lists
+import { List, Divider } from 'react-native-paper';
 ```
 
 ### Button Component
@@ -174,25 +81,22 @@ npm install react-native-paper react-native-vector-icons
 ```typescript
 import { Button } from 'react-native-paper';
 
-// Variants
-<Button mode="contained" onPress={handlePress}>Primary</Button>
-<Button mode="outlined" onPress={handlePress}>Outlined</Button>
-<Button mode="text" onPress={handlePress}>Text</Button>
-<Button mode="elevated" onPress={handlePress}>Elevated</Button>
-<Button mode="contained-tonal" onPress={handlePress}>Tonal</Button>
+// Modes
+<Button mode="contained">Primary</Button>
+<Button mode="outlined">Outlined</Button>
+<Button mode="text">Text Button</Button>
+<Button mode="elevated">Elevated</Button>
+<Button mode="contained-tonal">Tonal</Button>
 
-// With icons
-<Button icon="camera" mode="contained" onPress={handlePress}>
-  Take Photo
-</Button>
+// With icon
+<Button icon="camera" mode="contained">Take Photo</Button>
 
-// Loading state
-<Button loading={isLoading} mode="contained" onPress={handlePress}>
-  Submit
-</Button>
+// States
+<Button disabled>Disabled</Button>
+<Button loading={isLoading}>Submit</Button>
 
-// Disabled
-<Button disabled mode="contained">Disabled</Button>
+// Full width
+<Button mode="contained" style={{ width: '100%' }}>Full Width</Button>
 ```
 
 ### Card Component
@@ -200,99 +104,77 @@ import { Button } from 'react-native-paper';
 ```typescript
 import { Card, Text } from 'react-native-paper';
 
-<Card className="m-4">
+<Card className="m-4 rounded-xl">
   <Card.Cover source={{ uri: imageUrl }} />
-  <Card.Title
-    title="Card Title"
-    subtitle="Card Subtitle"
-    left={(props) => <Avatar.Icon {...props} icon="folder" />}
-  />
+  <Card.Title title="Card Title" subtitle="Subtitle" />
   <Card.Content>
-    <Text variant="bodyMedium">Card content goes here</Text>
+    <Text>Card content goes here</Text>
   </Card.Content>
   <Card.Actions>
     <Button>Cancel</Button>
-    <Button mode="contained">OK</Button>
+    <Button mode="contained">Confirm</Button>
   </Card.Actions>
 </Card>
 ```
 
-### Text Input Component
+### TextInput Component
 
 ```typescript
 import { TextInput } from 'react-native-paper';
 
-// Basic input
+// Outlined style (recommended)
 <TextInput
   label="Email"
   value={email}
   onChangeText={setEmail}
   mode="outlined"
+  keyboardType="email-address"
+  autoCapitalize="none"
 />
 
-// With icons
+// Flat style
 <TextInput
   label="Password"
   value={password}
   onChangeText={setPassword}
-  mode="outlined"
-  secureTextEntry={!showPassword}
-  right={
-    <TextInput.Icon
-      icon={showPassword ? 'eye-off' : 'eye'}
-      onPress={() => setShowPassword(!showPassword)}
-    />
-  }
+  mode="flat"
+  secureTextEntry
+  right={<TextInput.Icon icon="eye" />}
 />
-
-// Error state
-<TextInput
-  label="Email"
-  value={email}
-  onChangeText={setEmail}
-  mode="outlined"
-  error={!!errors.email}
-/>
-{errors.email && (
-  <HelperText type="error">{errors.email}</HelperText>
-)}
 ```
 
-### FAB (Floating Action Button)
+### List Component
 
 ```typescript
-import { FAB, Portal, FAB as FABGroup } from 'react-native-paper';
+import { List, Divider } from 'react-native-paper';
 
-// Simple FAB
-<FAB
-  icon="plus"
-  className="absolute bottom-4 right-4"
-  onPress={handleAdd}
-/>
-
-// FAB Group (expandable)
-<Portal>
-  <FABGroup
-    open={open}
-    visible
-    icon={open ? 'close' : 'plus'}
-    actions={[
-      { icon: 'plus', label: 'Add', onPress: handleAdd },
-      { icon: 'star', label: 'Star', onPress: handleStar },
-    ]}
-    onStateChange={({ open }) => setOpen(open)}
+<List.Section>
+  <List.Subheader>Settings</List.Subheader>
+  <List.Item
+    title="Notifications"
+    description="Manage notification preferences"
+    left={(props) => <List.Icon {...props} icon="bell" />}
+    onPress={handleNotifications}
   />
-</Portal>
+  <Divider />
+  <List.Item
+    title="Privacy"
+    left={(props) => <List.Icon {...props} icon="lock" />}
+    onPress={handlePrivacy}
+  />
+</List.Section>
 ```
 
 ---
 
-## NativeWind Styling
+## cn() Utility for Class Merging
 
-### cn() Utility for Class Merging
+### What is cn()
+
+`cn()` combines `clsx` and `tailwind-merge` for conditional class merging with NativeWind:
 
 ```typescript
-// lib/utils.ts
+// ~/lib/utils.ts
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -304,31 +186,24 @@ export function cn(...inputs: ClassValue[]) {
 ### Usage Examples
 
 ```typescript
-import { cn } from '@/lib/utils';
+import { View, Text } from 'react-native';
+import { cn } from '~/lib/utils';
 
 // Conditional classes
 <View className={cn(
-  'p-4 bg-background rounded-lg',
+  'p-4 bg-background',
   isActive && 'bg-primary',
   isDisabled && 'opacity-50'
 )} />
 
-// Dynamic Pressable styling
-<Pressable
-  className={({ pressed }) => cn(
-    'p-4 rounded-lg bg-primary',
-    pressed && 'bg-primary/80'
-  )}
->
-  <Text className="text-white">Press Me</Text>
-</Pressable>
-
 // Array of conditions
-<View className={cn([
-  'base-class',
-  condition1 && 'class-1',
-  condition2 && 'class-2',
-])} />
+<Text className={cn([
+  'text-base',
+  isError && 'text-destructive',
+  isSuccess && 'text-green-600',
+])}>
+  Status message
+</Text>
 ```
 
 ---
@@ -340,19 +215,20 @@ import { cn } from '@/lib/utils';
 ```typescript
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { View, Text, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 
 // Redux
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '~/redux/store/hooks';
 
 // UI Components
 import { Button, Card } from 'react-native-paper';
 
 // Utilities
-import { cn } from '@/lib/utils';
+import { cn } from '~/lib/utils';
 
 // Types
-import type { User } from '@/types/user';
+import type { User } from '~/types/user';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 // 1. PROPS INTERFACE (with JSDoc)
 interface MyComponentProps {
@@ -371,8 +247,8 @@ export default function MyComponent({
   mode = 'view',
 }: MyComponentProps) {
   // 3. HOOKS (in this order)
-  // - Navigation
-  const router = useRouter();
+  // - Navigation hooks
+  const navigation = useNavigation();
 
   // - Redux hooks
   const dispatch = useAppDispatch();
@@ -412,123 +288,189 @@ export default function MyComponent({
 
   // 5. RENDER
   return (
-    <View className="flex-1 p-4">
-      <Card>
-        <Card.Content>
-          <Text className={cn('text-base', loading && 'opacity-50')}>
-            {user?.email}
-          </Text>
-          <Button
-            mode="contained"
-            onPress={handleSave}
-            loading={loading}
-            disabled={loading}
-          >
-            Save
-          </Button>
-        </Card.Content>
-      </Card>
-    </View>
+    <Card className="m-4">
+      <Card.Title title="My Component" />
+      <Card.Content className="gap-4">
+        <Text className={cn('text-muted-foreground', loading && 'opacity-50')}>
+          {user?.email}
+        </Text>
+        <Button
+          mode="contained"
+          onPress={handleSave}
+          disabled={loading}
+          loading={loading}
+        >
+          Save
+        </Button>
+      </Card.Content>
+    </Card>
   );
 }
 ```
 
 ---
 
-## Screen Component Pattern
+## React Native Core Components
 
-### Basic Screen
+### View vs ScrollView vs SafeAreaView
 
 ```typescript
 import { View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack } from 'expo-router';
 
-export default function ProfileScreen() {
+// View - Basic container (does not scroll)
+<View className="flex-1 p-4">
+  <Text>Fixed content</Text>
+</View>
+
+// ScrollView - For scrollable content
+<ScrollView className="flex-1" contentContainerClassName="p-4 gap-4">
+  <Text>Scrollable content</Text>
+</ScrollView>
+
+// SafeAreaView - Handles notches and safe areas
+<SafeAreaView className="flex-1 bg-background">
+  <View className="flex-1 p-4">
+    <Text>Safe content</Text>
+  </View>
+</SafeAreaView>
+```
+
+### FlatList for Lists
+
+```typescript
+import { FlatList, View, Text, Pressable } from 'react-native';
+
+interface Item {
+  id: string;
+  title: string;
+}
+
+interface ItemListProps {
+  items: Item[];
+  onItemPress: (item: Item) => void;
+}
+
+export default function ItemList({ items, onItemPress }: ItemListProps) {
   return (
-    <>
-      <Stack.Screen
-        options={{
-          title: 'Profile',
-          headerShown: true,
-        }}
-      />
-      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
-        <ScrollView
-          className="flex-1"
-          contentContainerClassName="p-4 gap-4"
-          showsVerticalScrollIndicator={false}
+    <FlatList
+      data={items}
+      keyExtractor={(item) => item.id}
+      contentContainerClassName="p-4 gap-3"
+      renderItem={({ item }) => (
+        <Pressable
+          onPress={() => onItemPress(item)}
+          className="p-4 bg-card rounded-lg active:opacity-70"
         >
-          {/* Screen content */}
-        </ScrollView>
-      </SafeAreaView>
-    </>
+          <Text className="text-foreground font-medium">{item.title}</Text>
+        </Pressable>
+      )}
+      ListEmptyComponent={
+        <View className="flex-1 items-center justify-center p-8">
+          <Text className="text-muted-foreground">No items found</Text>
+        </View>
+      }
+    />
   );
 }
 ```
 
-### Screen with Loading State
+### Pressable with Feedback
 
 ```typescript
-import { View, ActivityIndicator } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { Pressable, Text } from 'react-native';
 
-export default function DataScreen() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['data'],
-    queryFn: fetchData,
-  });
+// NativeWind active state
+<Pressable
+  onPress={handlePress}
+  className="p-4 bg-primary rounded-lg active:bg-primary/80 active:scale-[0.98]"
+>
+  <Text className="text-primary-foreground font-semibold text-center">
+    Press Me
+  </Text>
+</Pressable>
 
-  if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" color="#007AFF" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View className="flex-1 items-center justify-center p-4">
-        <Text className="text-destructive text-center">
-          Error loading data. Please try again.
-        </Text>
-        <Button onPress={refetch} className="mt-4">
-          Retry
-        </Button>
-      </View>
-    );
-  }
-
-  return (
-    <View className="flex-1">
-      {/* Render data */}
-    </View>
-  );
-}
+// With custom feedback using style function
+<Pressable
+  onPress={handlePress}
+  style={({ pressed }) => [
+    { opacity: pressed ? 0.7 : 1 },
+  ]}
+  className="p-4 bg-primary rounded-lg"
+>
+  <Text className="text-primary-foreground">Press Me</Text>
+</Pressable>
 ```
 
 ---
 
-## Platform-Specific Code
+## Component Separation
+
+### When to Split Components
+
+**Split into multiple components when:**
+
+- Component exceeds 200 lines
+- Multiple distinct responsibilities
+- Reusable sections
+- Complex nested JSX
+
+**Example:**
+
+```typescript
+// AVOID - Monolithic
+function MassiveScreen() {
+  // 500+ lines
+  // Header logic
+  // Form logic
+  // List logic
+  // Modal logic
+}
+
+// PREFERRED - Modular
+function Screen() {
+  return (
+    <SafeAreaView className="flex-1">
+      <ScreenHeader />
+      <SearchForm onSearch={handleSearch} />
+      <ItemList data={filteredData} />
+      <ActionModal visible={isOpen} onClose={handleClose} />
+    </SafeAreaView>
+  );
+}
+```
+
+### When to Keep Together
+
+**Keep in same file when:**
+
+- Component < 100 lines
+- Tightly coupled logic
+- Not reusable elsewhere
+- Simple presentation component
+
+---
+
+## Platform-Specific Patterns
 
 ### Platform Detection
 
 ```typescript
-import { Platform } from 'react-native';
+import { Platform, View, Text } from 'react-native';
 
-// Simple check
-if (Platform.OS === 'ios') {
-  // iOS specific code
-}
+// Conditional rendering
+<View>
+  {Platform.OS === 'ios' && <Text>iOS only content</Text>}
+  {Platform.OS === 'android' && <Text>Android only content</Text>}
+</View>
 
-// Platform select
+// Platform.select for values
 const styles = {
   shadow: Platform.select({
     ios: {
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
+      shadowOpacity: 0.1,
       shadowRadius: 4,
     },
     android: {
@@ -536,49 +478,18 @@ const styles = {
     },
   }),
 };
-
-// Version check
-if (Platform.OS === 'android' && Platform.Version >= 23) {
-  // Android 6.0+ specific code
-}
 ```
 
 ### Platform-Specific Files
 
 ```
 components/
-├── Button.tsx          # Default (shared logic)
-├── Button.ios.tsx      # iOS specific
-└── Button.android.tsx  # Android specific
+├── Button.tsx          # Shared logic
+├── Button.ios.tsx      # iOS-specific implementation
+└── Button.android.tsx  # Android-specific implementation
 ```
 
-React Native automatically picks the right file based on platform.
-
----
-
-## New Architecture Patterns
-
-### TurboModules
-
-For React Native 0.76+, use TurboModules for native module access:
-
-```typescript
-// Native modules are automatically lazy-loaded
-import { NativeModules } from 'react-native';
-
-// Access TurboModule
-const { MyModule } = NativeModules;
-```
-
-### Fabric Components
-
-Fabric components use the new rendering system:
-
-```typescript
-// Most React Native components are already Fabric-compatible
-// Just use them normally with the new architecture enabled
-import { View, Text, Image } from 'react-native';
-```
+React Native automatically imports the correct file based on platform.
 
 ---
 
@@ -593,8 +504,8 @@ function Parent() {
 
   return (
     <Child
-      data={data} // Props down
-      onSelect={setSelectedId} // Events up
+      data={data}           // Props down
+      onSelect={setSelectedId}  // Events up
     />
   );
 }
@@ -623,8 +534,9 @@ export default function Child({ data, onSelect }: ChildProps) {
 ### Using Redux for Shared State
 
 ```typescript
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { selectItem } from '@/redux/slices/itemSlice';
+// When state needs to be shared across components
+import { useAppDispatch, useAppSelector } from '~/redux/store/hooks';
+import { selectItem } from '~/redux/features/itemSlice';
 
 function Child() {
   const dispatch = useAppDispatch();
@@ -644,22 +556,67 @@ function Child() {
 
 ---
 
+## Screen Component Pattern
+
+### Standard Screen Template
+
+```typescript
+import { View, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator } from 'react-native-paper';
+
+interface ScreenProps {
+  children: React.ReactNode;
+  scrollable?: boolean;
+  loading?: boolean;
+}
+
+export default function Screen({
+  children,
+  scrollable = true,
+  loading = false,
+}: ScreenProps) {
+  if (loading) {
+    return (
+      <SafeAreaView className="flex-1 bg-background items-center justify-center">
+        <ActivityIndicator size="large" />
+      </SafeAreaView>
+    );
+  }
+
+  const Container = scrollable ? ScrollView : View;
+
+  return (
+    <SafeAreaView className="flex-1 bg-background">
+      <Container
+        className="flex-1"
+        contentContainerStyle={scrollable ? { flexGrow: 1 } : undefined}
+      >
+        {children}
+      </Container>
+    </SafeAreaView>
+  );
+}
+```
+
+---
+
 ## Summary
 
-**Modern React Native Component Recipe:**
+**Modern Component Recipe:**
 
 1. Function components with TypeScript props interface
-2. NativeWind classes for styling
-3. React Native Paper for Material Design components
-4. `cn()` utility for conditional classes
-5. `Pressable` for touch interactions
-6. `useAppSelector` and `useAppDispatch` for Redux
-7. `useRouter` from Expo Router for navigation
-8. Event handlers with `useCallback` when passed to children
-9. Default export at bottom
+2. React Native Paper components for UI elements
+3. `cn()` utility for conditional NativeWind classes
+4. NativeWind for styling
+5. `useAppSelector` and `useAppDispatch` for Redux
+6. Event handlers with `useCallback` when passed to children
+7. Default export at bottom
+8. Platform-specific handling when needed
 
 **See Also:**
 
 - [styling-guide.md](styling-guide.md) - NativeWind patterns
-- [common-patterns.md](common-patterns.md) - Form, modal, list patterns
+- [navigation-guide.md](navigation-guide.md) - React Navigation setup
+- [common-patterns.md](common-patterns.md) - Form patterns
 - [complete-examples.md](complete-examples.md) - Full working examples
