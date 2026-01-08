@@ -1,246 +1,235 @@
 # Routing Guide
 
-React Router 7 implementation with declarative routing and layout-based organization.
+Navigation implementation for React Native using Expo Router (file-based) and React Navigation (declarative).
 
 ---
 
-## React Router 7 Overview
+## Navigation Options
 
-The project uses **React Router 7** with:
-
-- Declarative route configuration
-- Layout-based route organization
-- Server-side rendering (SSR) enabled
-- Type-safe navigation
-
----
-
-## Configuration Files
-
-### Main Route Configuration
-
-Location: `~/routes.ts`
-
-```typescript
-import { type RouteConfig, layout } from '@react-router/dev/routes';
-import { publicRoutes } from './routes/public.routes';
-import { authRoutes } from './routes/auth.routes';
-
-export default [
-  layout('pages/layout.tsx', publicRoutes),
-  layout('pages/auth/layout.tsx', authRoutes),
-] satisfies RouteConfig;
-```
-
-### React Router Configuration
-
-Location: `frontend/react-router.config.ts`
-
-```typescript
-import type { Config } from '@react-router/dev/config';
-
-export default {
-  // Server-side render by default
-  ssr: true,
-} satisfies Config;
-```
+| Feature | Expo Router | React Navigation |
+|---------|------------|------------------|
+| Routing Style | File-based (like Next.js) | Declarative configuration |
+| Best For | Expo projects, rapid development | Fine-grained control, complex navigation |
+| Deep Linking | Automatic | Manual configuration |
+| Type Safety | Built-in via file system | Requires manual typing |
 
 ---
 
-## Route Definitions
+## Expo Router (Recommended for Expo Projects)
 
-### Public Routes
+Expo Router provides file-based routing similar to Next.js for React Native.
 
-Location: `~/routes/public.routes.ts`
+### Installation
 
-```typescript
-import { route, index } from '@react-router/dev/routes';
-
-export const publicRoutes = [
-  index('pages/home.tsx'),
-  route('about', 'pages/public/about.tsx'),
-];
+```bash
+npx expo install expo-router expo-linking expo-constants
 ```
 
-### Auth Routes
+### Project Structure
 
-Location: `~/routes/auth.routes.ts`
-
-```typescript
-import { route } from '@react-router/dev/routes';
-
-export const authRoutes = [
-  route('login', 'pages/auth/login.tsx'),
-  route('register', 'pages/auth/register.tsx'),
-];
 ```
+app/
+├── _layout.tsx          # Root layout (providers, navigation container)
+├── index.tsx            # Home screen (/)
+├── (auth)/              # Auth group (route grouping)
+│   ├── _layout.tsx      # Auth layout (optional)
+│   ├── login.tsx        # /login
+│   └── register.tsx     # /register
+├── (tabs)/              # Tab navigation group
+│   ├── _layout.tsx      # Tab navigator layout
+│   ├── home.tsx         # /home tab
+│   ├── profile.tsx      # /profile tab
+│   └── settings.tsx     # /settings tab
+├── user/
+│   └── [id].tsx         # /user/:id (dynamic route)
+├── posts/
+│   └── [...slug].tsx    # /posts/* (catch-all route)
+└── +not-found.tsx       # 404 screen
+```
+
+### Route Naming Conventions
+
+| Pattern | Example File | URL |
+|---------|-------------|-----|
+| Static | `about.tsx` | `/about` |
+| Dynamic | `user/[id].tsx` | `/user/123` |
+| Catch-all | `[...slug].tsx` | `/any/nested/path` |
+| Groups | `(auth)/login.tsx` | `/login` |
+| Index | `index.tsx` | `/` |
 
 ---
 
-## Route Helpers
+### Root Layout
 
-### Available Functions
-
-```typescript
-import { route, index, layout } from '@react-router/dev/routes';
-
-// index - Home route for a path
-index('pages/home.tsx')  // Renders at parent path
-
-// route - Named route
-route('about', 'pages/about.tsx')  // /about
-
-// layout - Wraps child routes with a layout component
-layout('pages/layout.tsx', childRoutes)
-```
-
-### Route with Parameters
+Location: `app/_layout.tsx`
 
 ```typescript
-// Dynamic route parameter
-route('users/:id', 'pages/users/detail.tsx')  // /users/123
+import { Stack } from 'expo-router';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { Provider } from 'react-redux';
+import { store } from '../src/redux/store';
+import { queryClient } from '../src/lib/queryClient';
 
-// Optional parameter
-route('posts/:id?', 'pages/posts/index.tsx')  // /posts or /posts/123
-
-// Catch-all
-route('*', 'pages/not-found.tsx')  // Any unmatched route
-```
-
----
-
-## Layout Components
-
-### Main Layout
-
-Location: `~/pages/layout.tsx`
-
-```typescript
-import { Outlet } from 'react-router';
-import { Header } from '~/components/layout/header';
-import { Footer } from '~/components/layout/footer';
-
-export default function Layout() {
+export default function RootLayout() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1">
-        <Outlet />
-      </main>
-      <Footer />
-    </div>
-  );
-}
-```
-
-### Auth Layout
-
-Location: `~/pages/auth/layout.tsx`
-
-```typescript
-import { Outlet } from 'react-router';
-
-export default function AuthLayout() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <Outlet />
-    </div>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 ```
 
 ---
 
-## Navigation
+### Tab Navigation Layout
 
-### Link Component
+Location: `app/(tabs)/_layout.tsx`
 
 ```typescript
-import { Link } from 'react-router';
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+
+export default function TabLayout() {
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: '#007AFF',
+        tabBarInactiveTintColor: '#8E8E93',
+        headerShown: false,
+      }}
+    >
+      <Tabs.Screen
+        name="home"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
+  );
+}
+```
+
+---
+
+### Navigation Methods
+
+#### Link Component
+
+```typescript
+import { Link } from 'expo-router';
+import { Pressable, Text } from 'react-native';
 
 // Basic link
-<Link to="/about">About</Link>
-
-// With classes
-<Link to="/dashboard" className="text-primary hover:underline">
-  Dashboard
+<Link href="/about">
+  <Text>About</Text>
 </Link>
 
-// External link (use anchor)
-<a href="https://example.com" target="_blank" rel="noopener noreferrer">
-  External
-</a>
+// Link with params
+<Link href={`/user/${userId}`}>
+  <Text>View Profile</Text>
+</Link>
+
+// Link as button (asChild)
+<Link href="/settings" asChild>
+  <Pressable className="bg-primary p-4 rounded-lg">
+    <Text className="text-white">Settings</Text>
+  </Pressable>
+</Link>
+
+// Replace (no back navigation)
+<Link href="/login" replace>
+  <Text>Login</Text>
+</Link>
 ```
 
-### Programmatic Navigation
+#### Programmatic Navigation
 
 ```typescript
-import { useNavigate } from 'react-router';
+import { useRouter } from 'expo-router';
 
-export default function MyComponent() {
-  const navigate = useNavigate();
+export default function MyScreen() {
+  const router = useRouter();
 
-  const handleClick = () => {
-    // Navigate to route
-    navigate('/dashboard');
+  const handleNavigation = () => {
+    // Navigate forward
+    router.push('/dashboard');
 
-    // Navigate with replace (no history entry)
-    navigate('/login', { replace: true });
+    // Navigate with params
+    router.push(`/user/${userId}`);
+
+    // Replace current screen
+    router.replace('/login');
 
     // Go back
-    navigate(-1);
+    router.back();
+
+    // Navigate to specific tab
+    router.push('/(tabs)/profile');
   };
 
-  return <button onClick={handleClick}>Navigate</button>;
+  return <Button onPress={handleNavigation} title="Navigate" />;
 }
-```
-
-### Using Button with Link (asChild)
-
-```typescript
-import { Button } from '~/components/ui/button';
-import { Link } from 'react-router';
-
-<Button asChild>
-  <Link to="/dashboard">Go to Dashboard</Link>
-</Button>
 ```
 
 ---
 
-## Route Parameters
+### Route Parameters
 
-### Accessing Parameters
+#### Dynamic Route
+
+File: `app/user/[id].tsx`
 
 ```typescript
-import { useParams } from 'react-router';
+import { useLocalSearchParams } from 'expo-router';
+import { View, Text } from 'react-native';
 
-export default function UserDetail() {
-  const { id } = useParams<{ id: string }>();
+export default function UserScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
 
-  return <div>User ID: {id}</div>;
+  return (
+    <View className="flex-1 p-4">
+      <Text className="text-lg">User ID: {id}</Text>
+    </View>
+  );
 }
 ```
 
-### Search Parameters
+#### Query Parameters
 
 ```typescript
-import { useSearchParams } from 'react-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
-export default function SearchPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+export default function SearchScreen() {
+  const { q, page } = useLocalSearchParams<{ q?: string; page?: string }>();
+  const router = useRouter();
 
-  const query = searchParams.get('q') || '';
-  const page = searchParams.get('page') || '1';
-
-  const updateSearch = (newQuery: string) => {
-    setSearchParams({ q: newQuery, page: '1' });
+  const updateSearch = (query: string) => {
+    router.setParams({ q: query, page: '1' });
   };
 
   return (
-    <input
-      value={query}
-      onChange={(e) => updateSearch(e.target.value)}
+    <TextInput
+      value={q || ''}
+      onChangeText={updateSearch}
+      placeholder="Search..."
     />
   );
 }
@@ -248,94 +237,280 @@ export default function SearchPage() {
 
 ---
 
-## Route Organization
-
-### Adding a New Route Group
-
-1. Create route definitions file:
+### Protected Routes
 
 ```typescript
-// ~/routes/dashboard.routes.ts
-import { route, index } from '@react-router/dev/routes';
+// app/(auth)/_layout.tsx
+import { Redirect, Stack } from 'expo-router';
+import { useAppSelector } from '../../src/redux/hooks';
 
-export const dashboardRoutes = [
-  index('pages/dashboard/index.tsx'),
-  route('settings', 'pages/dashboard/settings.tsx'),
-  route('profile', 'pages/dashboard/profile.tsx'),
-];
-```
+export default function AuthLayout() {
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
-2. Create layout (if needed):
+  // Redirect authenticated users away from auth screens
+  if (isAuthenticated) {
+    return <Redirect href="/(tabs)/home" />;
+  }
 
-```typescript
-// ~/pages/dashboard/layout.tsx
-import { Outlet } from 'react-router';
-import { Sidebar } from '~/components/layout/sidebar';
+  return <Stack screenOptions={{ headerShown: false }} />;
+}
 
-export default function DashboardLayout() {
+// app/(tabs)/_layout.tsx - Protected tabs
+import { Redirect, Tabs } from 'expo-router';
+import { useAppSelector } from '../../src/redux/hooks';
+
+export default function TabLayout() {
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+
+  if (!isAuthenticated) {
+    return <Redirect href="/login" />;
+  }
+
   return (
-    <div className="flex">
-      <Sidebar />
-      <main className="flex-1 p-6">
-        <Outlet />
-      </main>
-    </div>
+    <Tabs>
+      {/* Tab screens */}
+    </Tabs>
   );
 }
 ```
 
-3. Add to main routes:
+---
+
+### Deep Linking
+
+Expo Router automatically generates deep links based on file structure.
 
 ```typescript
-// ~/routes.ts
-import { dashboardRoutes } from './routes/dashboard.routes';
+// app.json
+{
+  "expo": {
+    "scheme": "myapp",
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
+```
 
-export default [
-  layout('pages/layout.tsx', publicRoutes),
-  layout('pages/auth/layout.tsx', authRoutes),
-  layout('pages/dashboard/layout.tsx', dashboardRoutes),
-] satisfies RouteConfig;
+Deep link examples:
+- `myapp://` → `/`
+- `myapp://user/123` → `/user/123`
+- `myapp://settings?tab=notifications` → `/settings?tab=notifications`
+
+---
+
+## React Navigation (Alternative)
+
+For projects not using Expo Router or needing more control.
+
+### Installation
+
+```bash
+npm install @react-navigation/native @react-navigation/native-stack @react-navigation/bottom-tabs
+npx expo install react-native-screens react-native-safe-area-context
+```
+
+### Type Definitions
+
+```typescript
+// src/types/navigation.ts
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import type { CompositeScreenProps } from '@react-navigation/native';
+
+export type RootStackParamList = {
+  Home: undefined;
+  Login: undefined;
+  Register: undefined;
+  UserDetail: { userId: string };
+  MainTabs: undefined;
+};
+
+export type TabParamList = {
+  HomeTab: undefined;
+  ProfileTab: undefined;
+  SettingsTab: undefined;
+};
+
+export type RootStackScreenProps<T extends keyof RootStackParamList> =
+  NativeStackScreenProps<RootStackParamList, T>;
+
+export type TabScreenProps<T extends keyof TabParamList> = CompositeScreenProps<
+  BottomTabScreenProps<TabParamList, T>,
+  NativeStackScreenProps<RootStackParamList>
+>;
+
+// Enable type checking in useNavigation
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParamList {}
+  }
+}
+```
+
+### Navigator Setup
+
+```typescript
+// src/navigation/RootNavigator.tsx
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../types/navigation';
+import { useAppSelector } from '../redux/hooks';
+import { LoginScreen } from '../screens/auth/LoginScreen';
+import { MainTabs } from './MainTabs';
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+export function RootNavigator() {
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {isAuthenticated ? (
+          <Stack.Screen name="MainTabs" component={MainTabs} />
+        ) : (
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+```
+
+### Tab Navigator
+
+```typescript
+// src/navigation/MainTabs.tsx
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import type { TabParamList } from '../types/navigation';
+
+const Tab = createBottomTabNavigator<TabParamList>();
+
+export function MainTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: keyof typeof Ionicons.glyphMap;
+
+          switch (route.name) {
+            case 'HomeTab':
+              iconName = focused ? 'home' : 'home-outline';
+              break;
+            case 'ProfileTab':
+              iconName = focused ? 'person' : 'person-outline';
+              break;
+            default:
+              iconName = 'ellipse';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#007AFF',
+        tabBarInactiveTintColor: 'gray',
+      })}
+    >
+      <Tab.Screen name="HomeTab" component={HomeScreen} options={{ title: 'Home' }} />
+      <Tab.Screen name="ProfileTab" component={ProfileScreen} options={{ title: 'Profile' }} />
+    </Tab.Navigator>
+  );
+}
+```
+
+### Navigation in Components
+
+```typescript
+import { useNavigation, useRoute } from '@react-navigation/native';
+import type { RootStackScreenProps } from '../types/navigation';
+
+// In a screen component
+export function HomeScreen({ navigation }: RootStackScreenProps<'Home'>) {
+  return (
+    <Button
+      title="View User"
+      onPress={() => navigation.navigate('UserDetail', { userId: '123' })}
+    />
+  );
+}
+
+// Using hooks
+export function SomeComponent() {
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  const goToProfile = () => {
+    navigation.navigate('ProfileTab');
+  };
+
+  return <Button onPress={goToProfile} title="Profile" />;
+}
 ```
 
 ---
 
-## Protected Routes
+## Modal and Stack Presentation
 
-### Auth Check in Layout
+### Expo Router Modal
 
 ```typescript
-// ~/pages/dashboard/layout.tsx
-import { Navigate, Outlet } from 'react-router';
-import { useAppSelector } from '~/redux/store/hooks';
+// app/_layout.tsx
+<Stack>
+  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+  <Stack.Screen
+    name="modal"
+    options={{
+      presentation: 'modal',
+      headerShown: true,
+      title: 'Modal',
+    }}
+  />
+</Stack>
+```
 
-export default function ProtectedLayout() {
-  const isAuthenticated = useAppSelector((state) => !!state.auth.user);
+### React Navigation Modal
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <Outlet />;
-}
+```typescript
+<Stack.Navigator>
+  <Stack.Group>
+    <Stack.Screen name="Home" component={HomeScreen} />
+  </Stack.Group>
+  <Stack.Group screenOptions={{ presentation: 'modal' }}>
+    <Stack.Screen name="Modal" component={ModalScreen} />
+  </Stack.Group>
+</Stack.Navigator>
 ```
 
 ---
 
 ## Summary
 
-**Routing Checklist:**
+**Expo Router Checklist:**
 
-- ✅ Define routes in `routes/*.routes.ts` files
-- ✅ Use `layout()` for shared layouts
-- ✅ Use `route()` for named routes
-- ✅ Use `index()` for default routes
-- ✅ Use `Link` for navigation (not `<a>`)
-- ✅ Use `useNavigate` for programmatic navigation
-- ✅ Use `useParams` for route parameters
-- ✅ Add route files to main `routes.ts`
+- ✅ Create screens in `app/` directory (file-based routing)
+- ✅ Use `_layout.tsx` for layouts and navigation containers
+- ✅ Use `(groupName)/` for route grouping
+- ✅ Use `[param].tsx` for dynamic routes
+- ✅ Use `Link` component for navigation
+- ✅ Use `useRouter()` for programmatic navigation
+- ✅ Use `useLocalSearchParams()` for route params
+- ✅ Use `Redirect` for protected routes
+
+**React Navigation Checklist:**
+
+- ✅ Define typed `ParamList` for each navigator
+- ✅ Set up `NavigationContainer` at root
+- ✅ Use `createNativeStackNavigator` for stack navigation
+- ✅ Use `createBottomTabNavigator` for tabs
+- ✅ Use typed `navigation.navigate()` for navigation
+- ✅ Use `useRoute()` for accessing params
 
 **See Also:**
 
 - [file-organization.md](file-organization.md) - Route file structure
 - [common-patterns.md](common-patterns.md) - Auth patterns
-- [complete-examples.md](complete-examples.md) - Full routing examples
+- [complete-examples.md](complete-examples.md) - Full navigation examples

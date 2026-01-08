@@ -1,109 +1,209 @@
 # Styling Guide
 
-Modern styling patterns using Tailwind CSS 4, Shadcn/UI, and CSS variables for the ActivityCoaching application.
+Modern styling patterns using NativeWind 4.x (Tailwind CSS for React Native) and React Native Paper.
 
 ---
 
 ## Core Concepts
 
-### Tailwind CSS 4
+### NativeWind 4.x
 
-The project uses Tailwind CSS 4 with utility-first styling:
+NativeWind brings Tailwind CSS to React Native with utility-first styling:
 
 ```typescript
+import { View, Text } from 'react-native';
+
 // Direct utility classes
-<div className="p-4 mb-3 flex flex-col gap-2">
-  Content
-</div>
+<View className="p-4 mb-3 flex flex-col gap-2">
+  <Text className="text-base text-foreground">Content</Text>
+</View>
 ```
 
-### cn() Utility
+### Installation
 
-Use `cn()` for conditional class merging (combines `clsx` + `tailwind-merge`):
+```bash
+npm install nativewind tailwindcss
+npx tailwindcss init
+```
 
-```typescript
-import { cn } from '~/lib/utils';
+### Configuration
 
-<div className={cn(
-  'p-4 bg-background',
-  isActive && 'bg-primary text-primary-foreground',
-  isDisabled && 'opacity-50 pointer-events-none'
-)} />
+```javascript
+// tailwind.config.js
+module.exports = {
+  content: [
+    './app/**/*.{js,jsx,ts,tsx}',
+    './src/**/*.{js,jsx,ts,tsx}',
+  ],
+  presets: [require('nativewind/preset')],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#007AFF',
+        secondary: '#5856D6',
+        destructive: '#FF3B30',
+        background: '#FFFFFF',
+        foreground: '#000000',
+        muted: '#8E8E93',
+        'muted-foreground': '#636366',
+      },
+    },
+  },
+  plugins: [],
+};
+```
+
+```javascript
+// babel.config.js
+module.exports = function (api) {
+  api.cache(true);
+  return {
+    presets: [
+      ['babel-preset-expo', { jsxImportSource: 'nativewind' }],
+      'nativewind/babel',
+    ],
+  };
+};
 ```
 
 ---
 
-## CSS Variables (Theme)
+## cn() Utility
 
-### Available Color Variables
+Use `cn()` for conditional class merging (combines `clsx` + `tailwind-merge`):
 
-Colors are defined in `~/styles/app.css` using oklch color space:
+```typescript
+// lib/utils.ts
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
-```css
-:root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  /* Chart colors, sidebar colors, etc. */
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
 ```
 
-### Using Color Variables
+### Usage Examples
+
+```typescript
+import { cn } from '@/lib/utils';
+
+// Conditional classes
+<View className={cn(
+  'p-4 bg-background rounded-lg',
+  isActive && 'bg-primary',
+  isDisabled && 'opacity-50'
+)} />
+
+// With Pressable
+<Pressable
+  className={({ pressed }) => cn(
+    'p-4 rounded-lg bg-primary',
+    pressed && 'opacity-80'
+  )}
+>
+  <Text className="text-white">Press Me</Text>
+</Pressable>
+
+// Array of conditions
+<View className={cn([
+  'base-class',
+  condition1 && 'class-1',
+  condition2 && 'class-2',
+])} />
+```
+
+---
+
+## Color System
+
+### Defining Theme Colors
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        // Semantic colors
+        background: 'rgb(var(--background) / <alpha-value>)',
+        foreground: 'rgb(var(--foreground) / <alpha-value>)',
+        primary: {
+          DEFAULT: 'rgb(var(--primary) / <alpha-value>)',
+          foreground: 'rgb(var(--primary-foreground) / <alpha-value>)',
+        },
+        secondary: {
+          DEFAULT: 'rgb(var(--secondary) / <alpha-value>)',
+          foreground: 'rgb(var(--secondary-foreground) / <alpha-value>)',
+        },
+        muted: {
+          DEFAULT: 'rgb(var(--muted) / <alpha-value>)',
+          foreground: 'rgb(var(--muted-foreground) / <alpha-value>)',
+        },
+        destructive: {
+          DEFAULT: 'rgb(var(--destructive) / <alpha-value>)',
+          foreground: 'rgb(var(--destructive-foreground) / <alpha-value>)',
+        },
+      },
+    },
+  },
+};
+```
+
+### Using Colors
 
 ```typescript
 // Via Tailwind classes (preferred)
-<div className="bg-background text-foreground" />
-<div className="bg-primary text-primary-foreground" />
-<div className="text-muted-foreground" />
-<div className="border-border" />
-<div className="bg-destructive" />
+<View className="bg-background" />
+<Text className="text-foreground" />
+<Text className="text-primary" />
+<Text className="text-muted-foreground" />
+<View className="bg-destructive" />
 
 // Semantic usage
-<p className="text-muted-foreground">Secondary text</p>
-<button className="bg-primary text-primary-foreground">Button</button>
-<div className="border border-input">Input border</div>
+<Text className="text-muted-foreground">Secondary text</Text>
+<Pressable className="bg-primary">
+  <Text className="text-primary-foreground">Button</Text>
+</Pressable>
 ```
 
 ---
 
 ## Dark Mode
 
-### How Dark Mode Works
+### Setup with NativeWind
 
-Dark mode is activated by adding `.dark` class to the document:
+```typescript
+// app/_layout.tsx
+import { useColorScheme } from 'nativewind';
+import { View } from 'react-native';
 
-```css
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  /* ... other overrides */
+export default function RootLayout() {
+  const { colorScheme, setColorScheme } = useColorScheme();
+
+  return (
+    <View className={colorScheme === 'dark' ? 'dark' : ''}>
+      {/* App content */}
+    </View>
+  );
 }
 ```
 
-### Dark Mode Variants
+### Dark Mode Classes
 
 ```typescript
 // Automatic with semantic colors (preferred)
-<div className="bg-background text-foreground" />
-// Light: white bg, dark text
-// Dark: dark bg, light text
+<View className="bg-background" />
+// Light: white bg, Dark: dark bg (based on theme config)
 
 // Explicit dark mode variants
-<div className="bg-white dark:bg-gray-900" />
-<div className="text-gray-900 dark:text-white" />
+<View className="bg-white dark:bg-gray-900" />
+<Text className="text-gray-900 dark:text-white" />
+
+// Toggle dark mode
+const { toggleColorScheme } = useColorScheme();
+<Pressable onPress={toggleColorScheme}>
+  <Text>Toggle Dark Mode</Text>
+</Pressable>
 ```
 
 ---
@@ -114,173 +214,207 @@ Dark mode is activated by adding `.dark` class to the document:
 
 ```typescript
 // Padding
-<div className="p-4" />      // All sides: 1rem (16px)
-<div className="px-4" />     // Horizontal: 1rem
-<div className="py-4" />     // Vertical: 1rem
-<div className="pt-4" />     // Top only: 1rem
-<div className="p-2" />      // All sides: 0.5rem (8px)
+<View className="p-4" />      // All sides: 16px
+<View className="px-4" />     // Horizontal: 16px
+<View className="py-4" />     // Vertical: 16px
+<View className="pt-4" />     // Top only: 16px
+<View className="p-2" />      // All sides: 8px
 
 // Margin
-<div className="m-4" />      // All sides
-<div className="mx-auto" />  // Center horizontally
-<div className="mt-4 mb-2" />
+<View className="m-4" />      // All sides
+<View className="mx-auto" />  // Center horizontally (not common in RN)
+<View className="mt-4 mb-2" />
 
-// Gap (for flex/grid)
-<div className="gap-4" />    // 1rem gap
-<div className="gap-2" />    // 0.5rem gap
+// Gap (for flex)
+<View className="gap-4" />    // 16px gap
+<View className="gap-2" />    // 8px gap
 ```
 
 ### Flexbox
 
 ```typescript
-// Basic flex
-<div className="flex" />
-<div className="flex flex-col" />
-<div className="flex flex-row" />
+// Basic flex (default in React Native)
+<View className="flex" />
+<View className="flex-col" />  // Column (default)
+<View className="flex-row" />  // Row
 
 // Alignment
-<div className="flex items-center" />
-<div className="flex justify-center" />
-<div className="flex justify-between" />
-<div className="flex items-center justify-center" />
+<View className="items-center" />
+<View className="justify-center" />
+<View className="justify-between" />
+<View className="items-center justify-center" />
 
-// Gap
-<div className="flex gap-4" />
-<div className="flex flex-col gap-2" />
+// Flex grow/shrink
+<View className="flex-1" />      // flex: 1
+<View className="flex-none" />   // flex: none
+<View className="flex-grow" />   // flexGrow: 1
+<View className="flex-shrink-0" /> // flexShrink: 0
 
-// Common pattern
-<div className="flex items-center justify-between gap-4">
-  <span>Left</span>
-  <span>Right</span>
-</div>
-```
-
-### Grid
-
-```typescript
-// Basic grid
-<div className="grid grid-cols-2 gap-4" />
-<div className="grid grid-cols-3 gap-4" />
-
-// Responsive columns
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" />
-
-// Auto-fit columns
-<div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4" />
+// Common pattern - full screen centered
+<View className="flex-1 items-center justify-center">
+  <Text>Centered Content</Text>
+</View>
 ```
 
 ### Typography
 
 ```typescript
 // Font size
-<p className="text-sm" />    // 14px
-<p className="text-base" />  // 16px
-<p className="text-lg" />    // 18px
-<p className="text-xl" />    // 20px
-<p className="text-2xl" />   // 24px
-<p className="text-3xl" />   // 30px
+<Text className="text-xs" />    // 12px
+<Text className="text-sm" />    // 14px
+<Text className="text-base" />  // 16px
+<Text className="text-lg" />    // 18px
+<Text className="text-xl" />    // 20px
+<Text className="text-2xl" />   // 24px
+<Text className="text-3xl" />   // 30px
 
 // Font weight
-<p className="font-normal" />
-<p className="font-medium" />
-<p className="font-semibold" />
-<p className="font-bold" />
+<Text className="font-normal" />    // 400
+<Text className="font-medium" />    // 500
+<Text className="font-semibold" />  // 600
+<Text className="font-bold" />      // 700
 
 // Text color
-<p className="text-foreground" />
-<p className="text-muted-foreground" />
-<p className="text-primary" />
-<p className="text-destructive" />
+<Text className="text-foreground" />
+<Text className="text-muted-foreground" />
+<Text className="text-primary" />
+<Text className="text-destructive" />
+
+// Text alignment
+<Text className="text-center" />
+<Text className="text-left" />
+<Text className="text-right" />
+
+// Line height
+<Text className="leading-tight" />
+<Text className="leading-normal" />
+<Text className="leading-relaxed" />
 ```
 
 ### Sizing
 
 ```typescript
 // Width
-<div className="w-full" />     // 100%
-<div className="w-1/2" />      // 50%
-<div className="w-auto" />
-<div className="max-w-md" />   // max-width: 28rem
-<div className="max-w-lg" />   // max-width: 32rem
-<div className="max-w-xl" />   // max-width: 36rem
+<View className="w-full" />     // width: '100%'
+<View className="w-1/2" />      // width: '50%'
+<View className="w-auto" />     // width: 'auto'
+<View className="w-20" />       // width: 80px
+<View className="w-40" />       // width: 160px
 
 // Height
-<div className="h-full" />
-<div className="h-screen" />   // 100vh
-<div className="min-h-screen" />
+<View className="h-full" />     // height: '100%'
+<View className="h-20" />       // height: 80px
+<View className="min-h-screen" /> // minHeight: screen height
 
-// Square
-<div className="size-4" />     // 1rem x 1rem
-<div className="size-8" />     // 2rem x 2rem
+// Fixed sizes
+<View className="w-10 h-10" />  // 40x40px
+<View className="size-10" />    // 40x40px (shorthand)
 ```
 
 ### Borders & Rounded
 
 ```typescript
 // Border
-<div className="border" />
-<div className="border-2" />
-<div className="border border-input" />
-<div className="border-b" />  // Bottom only
+<View className="border" />           // 1px border
+<View className="border-2" />         // 2px border
+<View className="border-primary" />   // Colored border
+<View className="border-b" />         // Bottom only
 
 // Rounded corners
-<div className="rounded" />
-<div className="rounded-md" />
-<div className="rounded-lg" />
-<div className="rounded-full" />
+<View className="rounded" />          // Small radius
+<View className="rounded-md" />       // Medium radius
+<View className="rounded-lg" />       // Large radius
+<View className="rounded-xl" />       // Extra large
+<View className="rounded-full" />     // Circular
+<View className="rounded-t-lg" />     // Top only
+```
+
+### Shadows (Platform-Specific)
+
+```typescript
+// iOS shadows
+<View className="shadow-sm" />
+<View className="shadow" />
+<View className="shadow-md" />
+<View className="shadow-lg" />
+
+// Note: Shadows work differently on Android
+// Use elevation for Android
+import { Platform } from 'react-native';
+
+<View
+  className="shadow-md"
+  style={Platform.OS === 'android' ? { elevation: 4 } : {}}
+/>
 ```
 
 ---
 
-## Responsive Design
+## React Native-Specific Patterns
 
-### Breakpoints
+### Safe Area
 
 ```typescript
-// Tailwind default breakpoints
-sm: 640px
-md: 768px
-lg: 1024px
-xl: 1280px
-2xl: 1536px
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+// Full screen with safe area
+<SafeAreaView className="flex-1 bg-background">
+  <View className="flex-1 p-4">
+    {/* Content */}
+  </View>
+</SafeAreaView>
+
+// Specific edges
+<SafeAreaView
+  className="flex-1 bg-background"
+  edges={['top', 'left', 'right']}
+>
+  {/* Content */}
+</SafeAreaView>
 ```
 
-### Mobile-First Approach
+### Absolute Positioning
 
 ```typescript
-// Start with mobile, add breakpoints for larger
-<div className="
-  flex flex-col          // Mobile: column layout
-  md:flex-row            // Tablet+: row layout
-  gap-4
-">
-  <div className="
-    w-full               // Mobile: full width
-    md:w-1/2             // Tablet+: half width
-  ">
-    Column 1
-  </div>
-  <div className="w-full md:w-1/2">
-    Column 2
-  </div>
-</div>
+// Absolute positioning
+<View className="relative flex-1">
+  {/* Main content */}
+  <View className="absolute bottom-4 right-4">
+    {/* Floating element */}
+  </View>
+</View>
+
+// FAB-style button
+<Pressable className="absolute bottom-4 right-4 w-14 h-14 rounded-full bg-primary items-center justify-center shadow-lg">
+  <Ionicons name="add" size={24} color="white" />
+</Pressable>
 ```
 
-### Common Responsive Patterns
+### ScrollView Styling
 
 ```typescript
-// Responsive padding
-<div className="p-4 md:p-6 lg:p-8" />
+<ScrollView
+  className="flex-1 bg-background"
+  contentContainerClassName="p-4 gap-4"
+  showsVerticalScrollIndicator={false}
+>
+  {/* Content */}
+</ScrollView>
+```
 
-// Responsive text
-<h1 className="text-2xl md:text-3xl lg:text-4xl" />
+### FlatList Styling
 
-// Hide/show on screen sizes
-<div className="hidden md:block" />  // Hidden on mobile, visible on tablet+
-<div className="md:hidden" />        // Visible on mobile only
-
-// Responsive grid
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" />
+```typescript
+<FlatList
+  data={items}
+  className="flex-1"
+  contentContainerClassName="p-4 gap-3"
+  renderItem={({ item }) => (
+    <View className="p-4 bg-card rounded-lg border border-border">
+      <Text className="text-foreground">{item.title}</Text>
+    </View>
+  )}
+/>
 ```
 
 ---
@@ -290,170 +424,230 @@ xl: 1280px
 ### Card Pattern
 
 ```typescript
-<div className="rounded-lg border bg-card p-6 shadow-sm">
-  <h3 className="text-lg font-semibold">Title</h3>
-  <p className="text-muted-foreground">Description</p>
-</div>
+<View className="rounded-xl bg-card border border-border p-4 shadow-sm">
+  <Text className="text-lg font-semibold text-foreground">Title</Text>
+  <Text className="text-sm text-muted-foreground mt-1">Description</Text>
+</View>
 ```
 
-### Form Input Pattern
+### Input Pattern
 
 ```typescript
-<div className="space-y-2">
-  <label className="text-sm font-medium">Label</label>
-  <input className="
-    flex h-9 w-full rounded-md border border-input bg-background
-    px-3 py-1 text-sm shadow-sm transition-colors
-    placeholder:text-muted-foreground
-    focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring
-  " />
-</div>
+<View className="gap-2">
+  <Text className="text-sm font-medium text-foreground">Label</Text>
+  <TextInput
+    className="h-12 px-4 rounded-lg border border-input bg-background text-foreground"
+    placeholderTextColor="#999"
+    placeholder="Enter text..."
+  />
+</View>
 ```
 
 ### Button Pattern
 
 ```typescript
 // Primary button
-<button className="
-  inline-flex items-center justify-center rounded-md
-  bg-primary text-primary-foreground
-  h-9 px-4 py-2 text-sm font-medium
-  hover:bg-primary/90
-  transition-colors
-">
-  Button
-</button>
+<Pressable
+  className={({ pressed }) => cn(
+    'h-12 px-6 rounded-lg bg-primary items-center justify-center',
+    pressed && 'opacity-80'
+  )}
+>
+  <Text className="text-base font-semibold text-primary-foreground">
+    Button
+  </Text>
+</Pressable>
 
 // Outline button
-<button className="
-  border border-input bg-background
-  hover:bg-accent hover:text-accent-foreground
-">
-  Outline
-</button>
+<Pressable
+  className={({ pressed }) => cn(
+    'h-12 px-6 rounded-lg border border-primary items-center justify-center',
+    pressed && 'bg-primary/10'
+  )}
+>
+  <Text className="text-base font-semibold text-primary">
+    Outline
+  </Text>
+</Pressable>
 ```
 
-### Page Layout Pattern
+### Screen Layout Pattern
 
 ```typescript
-<div className="min-h-screen bg-background">
-  <header className="border-b">
-    <div className="container mx-auto px-4 py-4">
-      Header
-    </div>
-  </header>
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-  <main className="container mx-auto px-4 py-8">
-    <h1 className="text-3xl font-bold mb-6">Page Title</h1>
-    Content
-  </main>
-</div>
+export default function MyScreen() {
+  return (
+    <SafeAreaView className="flex-1 bg-background">
+      {/* Header */}
+      <View className="px-4 py-3 border-b border-border">
+        <Text className="text-xl font-bold text-foreground">Title</Text>
+      </View>
+
+      {/* Content */}
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="p-4 gap-4"
+      >
+        {/* Screen content */}
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
 ```
 
 ---
 
-## Shadcn/UI Component Styling
+## Platform-Specific Styling
 
-### Customizing Shadcn Components
+### Platform Select
 
 ```typescript
-import { Button } from '~/components/ui/button';
-import { Card } from '~/components/ui/card';
-import { cn } from '~/lib/utils';
+import { Platform, StyleSheet } from 'react-native';
 
-// Add custom classes
-<Button className="w-full">Full Width Button</Button>
-
-// Conditional classes
-<Button className={cn(
-  'w-full',
-  isLoading && 'opacity-50 cursor-not-allowed'
-)}>
-  Submit
-</Button>
-
-// Override padding
-<Card className="p-8">More padding</Card>
+// With NativeWind, combine with Platform
+<View
+  className="p-4 rounded-lg bg-card"
+  style={Platform.select({
+    ios: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+    android: {
+      elevation: 3,
+    },
+  })}
+/>
 ```
 
-### CVA Variants
-
-Shadcn/UI components use CVA (Class Variance Authority) for variants:
+### Conditional Classes by Platform
 
 ```typescript
-// Button variants
-<Button variant="default">Primary</Button>
-<Button variant="secondary">Secondary</Button>
-<Button variant="destructive">Danger</Button>
-<Button variant="outline">Outlined</Button>
-<Button variant="ghost">Ghost</Button>
-<Button variant="link">Link</Button>
+import { Platform } from 'react-native';
 
-// Sizes
-<Button size="sm">Small</Button>
-<Button size="default">Default</Button>
-<Button size="lg">Large</Button>
-<Button size="icon"><Icon /></Button>
+<View className={cn(
+  'p-4 rounded-lg bg-card',
+  Platform.OS === 'ios' && 'shadow-md',
+  Platform.OS === 'android' && 'elevation-3'
+)} />
 ```
 
 ---
 
 ## What NOT to Do
 
+### Avoid StyleSheet.create for Simple Styles
+
+```typescript
+// ❌ AVOID - StyleSheet for simple layouts
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+    marginBottom: 12,
+  },
+});
+<View style={styles.container} />
+
+// ✅ PREFERRED - NativeWind classes
+<View className="p-4 mb-3" />
+```
+
 ### Avoid Inline Style Objects
 
 ```typescript
 // ❌ AVOID - Inline style objects
-<div style={{ padding: '16px', marginBottom: '12px' }}>
+<View style={{ padding: 16, marginBottom: 12 }}>
   Content
-</div>
+</View>
 
-// ✅ PREFERRED - Tailwind classes
-<div className="p-4 mb-3">
+// ✅ PREFERRED - NativeWind classes
+<View className="p-4 mb-3">
   Content
-</div>
+</View>
 ```
 
-### Avoid CSS-in-JS Libraries
+### When to Use StyleSheet
+
+Use StyleSheet.create only when:
+- Platform-specific styles (shadows, elevation)
+- Complex animations with Reanimated
+- Dynamic values that can't be expressed in Tailwind
 
 ```typescript
-// ❌ AVOID - styled-components, emotion, etc.
-import styled from 'styled-components';
+// ✅ OK - Platform-specific shadows
+const styles = StyleSheet.create({
+  shadow: Platform.select({
+    ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 } },
+    android: { elevation: 4 },
+  }),
+});
 
-const StyledDiv = styled.div`
-  padding: 16px;
-`;
-
-// ✅ PREFERRED - Tailwind utility classes
-<div className="p-4">Content</div>
+<View className="p-4 rounded-lg bg-card" style={styles.shadow} />
 ```
 
-### Avoid Global CSS (except for themes)
+---
+
+## NativeWind 4.x Specific Features
+
+### CSS Variables
 
 ```typescript
-// ❌ AVOID - Custom CSS classes in separate files
-// styles.css
-.my-custom-button { padding: 16px; }
+// Define in global.css
+:root {
+  --primary: 0 122 255;  /* RGB values */
+}
 
-// ✅ PREFERRED - Tailwind classes or CVA variants
-<Button className="px-4">Button</Button>
+// Use in tailwind.config.js
+colors: {
+  primary: 'rgb(var(--primary) / <alpha-value>)',
+}
+
+// Use in components
+<View className="bg-primary" />
+<View className="bg-primary/50" />  // 50% opacity
+```
+
+### Arbitrary Values
+
+```typescript
+// Custom sizes
+<View className="w-[200px] h-[100px]" />
+
+// Custom colors
+<Text className="text-[#FF6B6B]" />
+
+// Custom spacing
+<View className="p-[13px] m-[7px]" />
+```
+
+### Group Modifiers
+
+```typescript
+<View className="group">
+  <Text className="text-foreground group-hover:text-primary">
+    Text changes on parent hover
+  </Text>
+</View>
 ```
 
 ---
 
 ## Summary
 
-**Styling Checklist:**
+**NativeWind Styling Checklist:**
 
-- ✅ Use Tailwind CSS utility classes directly
+- ✅ Use NativeWind utility classes directly
 - ✅ Use `cn()` for conditional class merging
 - ✅ Use semantic color variables (`bg-background`, `text-foreground`)
-- ✅ Mobile-first responsive design
-- ✅ Shadcn/UI component variants via CVA
-- ✅ Dark mode via CSS variables (automatic)
-- ❌ No inline style objects
-- ❌ No CSS-in-JS libraries
-- ❌ No custom CSS files (except themes)
+- ✅ Use `flex-1` for full-height screens
+- ✅ Use `SafeAreaView` for device-safe content
+- ✅ Use `contentContainerClassName` for ScrollView/FlatList
+- ✅ Platform-specific shadows via StyleSheet
+- ❌ Avoid inline style objects
+- ❌ Avoid StyleSheet.create for simple layouts
+- ❌ Don't mix styling approaches inconsistently
 
 **See Also:**
 
