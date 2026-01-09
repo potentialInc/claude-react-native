@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "description": "React Native skill triggers",
+  "skills": {
+    "mobile-dev-guidelines": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": ["mobile", "react native", "screen", "navigation", "expo", "nativewind", "app", "ios", "android"],
+        "intentPatterns": [
+          "(create|implement|build|add|update|fix).*?(screen|navigation|mobile|app)",
+          "(style|design|layout).*?(mobile|app|screen)",
+          "(native|platform).*?(feature|module|component)"
+        ]
+      }
+    },
+    "frontend-dev-guidelines": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": ["component", "ui", "form", "modal", "hook", "state", "redux"],
+        "intentPatterns": [
+          "(create|implement|build|add).*?(component|hook|context)",
+          "(fetch|api|http).*?(service|call|request)"
+        ]
+      }
+    }
+  }
+}
