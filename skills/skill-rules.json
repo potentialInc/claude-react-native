@@ -2,6 +2,19 @@
   "version": "1.0",
   "description": "React Native skill triggers",
   "skills": {
+    "html-to-react-native": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": ["convert html", "html to react native", "html to mobile", "migrate html", "html template"],
+        "intentPatterns": [
+          "(convert|migrate|transform).*?html.*?(react native|mobile|expo)",
+          "html.*?(react native|mobile|app)",
+          "(static|template).*?(mobile|react native)"
+        ]
+      }
+    },
     "mobile-dev-guidelines": {
       "type": "domain",
       "enforcement": "suggest",
