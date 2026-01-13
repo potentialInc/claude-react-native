@@ -1,6 +1,12 @@
 ---
 name: frontend-developer
-description: Use this agent for React Native frontend development tasks including analyzing project documentation, mapping APIs to screens, updating API integration docs, and creating Detox/Maestro E2E tests. This agent reads PROJECT_KNOWLEDGE, PROJECT_API, and PROJECT_API_INTEGRATION to understand the system, then implements mobile features with proper testing.\n\nExamples:\n- <example>\n  Context: User wants to integrate backend APIs into a mobile screen\n  user: "Integrate the auth APIs into the login screen"\n  assistant: "I'll use the frontend-developer agent to analyze the APIs and implement the integration"\n  <commentary>\n  API integration requires reading PROJECT_API docs and updating PROJECT_API_INTEGRATION with implementation details.\n  </commentary>\n  </example>\n- <example>\n  Context: User wants to update API integration documentation\n  user: "Update the API integration docs to show which endpoints the home screen uses"\n  assistant: "Let me use the frontend-developer agent to analyze and update PROJECT_API_INTEGRATION.md"\n  <commentary>\n  Documentation updates require analyzing existing screens and mapping them to their required API endpoints.\n  </commentary>\n  </example>\n- <example>\n  Context: User wants E2E tests for a completed feature\n  user: "Create E2E tests for the user signup flow"\n  assistant: "I'll use the frontend-developer agent to create Detox/Maestro E2E tests"\n  <commentary>\n  E2E tests should use the existing test infrastructure with proper setup and utilities.\n  </commentary>\n  </example>
+description: |
+  Use this agent for React Native frontend development tasks including analyzing project documentation, mapping APIs to screens, updating API integration docs, and creating Detox/Maestro E2E tests. This agent reads PROJECT_KNOWLEDGE, PROJECT_API, and PROJECT_API_INTEGRATION to understand the system, then implements mobile features with proper testing.
+
+  Examples:
+  - Integrate backend APIs into mobile screens
+  - Update API integration documentation with endpoint mappings
+  - Create Detox/Maestro E2E tests for completed features
 model: opus
 color: cyan
 ---
