@@ -87,10 +87,10 @@ Creating a component? Follow this checklist:
 
 For detailed guidance, read these resources in order:
 
-1. [Routing Guide](./resources/routing-guide.md) - Expo Router & React Navigation
-2. [Component Patterns](./resources/component-patterns.md) - Screen and component structure
-3. [Styling Guide](./resources/styling-guide.md) - NativeWind 4.x patterns
-4. [Data Fetching](./resources/data-fetching.md) - Axios + TanStack Query v5
-5. [TypeScript Standards](./resources/typescript-standards.md) - Type safety patterns
-6. [Common Patterns](./resources/common-patterns.md) - Camera, animations, storage patterns
-7. [Performance](./resources/performance.md) - New Architecture optimizations
+1. [Navigation Guide](../../guides/navigation-guide.md) - Expo Router & React Navigation
+2. [Component Patterns](../../guides/component-patterns.md) - Screen and component structure
+3. [Styling Guide](../../guides/styling-guide.md) - NativeWind 4.x patterns
+4. [Data Fetching](../../guides/data-fetching.md) - Axios + TanStack Query v5
+5. [TypeScript Standards](../../guides/typescript-standards.md) - Type safety patterns
+6. [Common Patterns](../../guides/common-patterns.md) - Camera, animations, storage patterns
+7. [Performance](../../guides/performance.md) - New Architecture optimizations

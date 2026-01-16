@@ -920,8 +920,8 @@ import { Ionicons, Feather } from '@expo/vector-icons';
 
 ## See Also
 
-- [component-patterns.md](frontend-dev-guidelines/resources/component-patterns.md) - React Native component architecture
-- [navigation-guide.md](frontend-dev-guidelines/resources/navigation-guide.md) - Expo Router patterns
-- [styling-guide.md](frontend-dev-guidelines/resources/styling-guide.md) - NativeWind usage
-- [common-patterns.md](frontend-dev-guidelines/resources/common-patterns.md) - Forms with React Hook Form + Zod
-- [data-fetching.md](frontend-dev-guidelines/resources/data-fetching.md) - TanStack Query patterns
+- [component-patterns.md](../../guides/component-patterns.md) - React Native component architecture
+- [navigation-guide.md](../../guides/navigation-guide.md) - Expo Router patterns
+- [styling-guide.md](../../guides/styling-guide.md) - NativeWind usage
+- [common-patterns.md](../../guides/common-patterns.md) - Forms with React Hook Form + Zod
+- [data-fetching.md](../../guides/data-fetching.md) - TanStack Query patterns
