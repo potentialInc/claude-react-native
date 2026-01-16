@@ -6,7 +6,7 @@
       "type": "domain",
       "enforcement": "suggest",
       "priority": "high",
-      "file": "frontend-dev-guidelines.md",
+      "file": "development/frontend-dev-guidelines.md",
       "promptTriggers": {
         "keywords": ["mobile", "react native", "screen", "navigation", "expo", "nativewind", "app", "ios", "android", "component", "ui", "form", "modal", "hook", "state", "redux"],
         "intentPatterns": [
@@ -21,7 +21,7 @@
       "type": "domain",
       "enforcement": "suggest",
       "priority": "high",
-      "file": "figma-to-react-native.md",
+      "file": "converters/figma-to-react-native.md",
       "promptTriggers": {
         "keywords": ["figma", "convert figma", "figma to react native", "implement design", "design to mobile"],
         "intentPatterns": [
@@ -34,7 +34,7 @@
       "type": "domain",
       "enforcement": "suggest",
       "priority": "medium",
-      "file": "html-to-react-native.md",
+      "file": "converters/html-to-react-native.md",
       "promptTriggers": {
         "keywords": ["convert html", "html to react native", "html to mobile", "migrate html", "html template"],
         "intentPatterns": [
@@ -48,12 +48,47 @@
       "type": "domain",
       "enforcement": "suggest",
       "priority": "high",
-      "file": "e2e-test-generator.md",
+      "file": "e2e-testing/e2e-test-generator.md",
       "promptTriggers": {
         "keywords": ["e2e test", "maestro", "detox", "end-to-end", "e2e", "generate test", "mobile test"],
         "intentPatterns": [
           "(create|generate|write|add).*?(e2e|maestro|detox|test)",
           "(test|testing).*?(screen|flow|user|mobile)"
+        ]
+      }
+    },
+    "debugging": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "file": "debugging/fix-bug.md",
+      "promptTriggers": {
+        "keywords": ["fix bug", "debug", "react native error", "metro error", "expo error", "native module error", "crash", "red screen"],
+        "intentPatterns": [
+          "(fix|debug|solve|resolve).*?bug",
+          "(react native|metro|expo).*?error",
+          "troubleshoot.*?(issue|problem|error)",
+          "(app|screen).*?(crash|freeze|hang)"
+        ]
+      }
+    },
+    "code-quality": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "file": "code-quality/organize-types.md",
+      "promptTriggers": {
+        "keywords": ["organize types", "typescript types", "type organization", "screen types", "navigation types", "param list"],
+        "intentPatterns": [
+          "(organize|clean|refactor|centralize).*?types",
+          "type.*?(organization|structure|cleanup)",
+          "navigation.*?types"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/types/**/*.ts",
+          "**/types/**/*.d.ts"
         ]
       }
     }
