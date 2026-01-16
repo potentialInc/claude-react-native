@@ -6,7 +6,7 @@
       "type": "domain",
       "enforcement": "suggest",
       "priority": "high",
-      "file": "frontend-dev-guidelines.md",
+      "file": "development/frontend-dev-guidelines.md",
       "promptTriggers": {
         "keywords": ["mobile", "react native", "screen", "navigation", "expo", "nativewind", "app", "ios", "android", "component", "ui", "form", "modal", "hook", "state", "redux"],
         "intentPatterns": [
@@ -21,7 +21,7 @@
       "type": "domain",
       "enforcement": "suggest",
       "priority": "high",
-      "file": "figma-to-react-native.md",
+      "file": "converters/figma-to-react-native.md",
       "promptTriggers": {
         "keywords": ["figma", "convert figma", "figma to react native", "implement design", "design to mobile"],
         "intentPatterns": [
@@ -34,7 +34,7 @@
       "type": "domain",
       "enforcement": "suggest",
       "priority": "medium",
-      "file": "html-to-react-native.md",
+      "file": "converters/html-to-react-native.md",
       "promptTriggers": {
         "keywords": ["convert html", "html to react native", "html to mobile", "migrate html", "html template"],
         "intentPatterns": [
@@ -48,7 +48,7 @@
       "type": "domain",
       "enforcement": "suggest",
       "priority": "high",
-      "file": "e2e-test-generator.md",
+      "file": "e2e-testing/e2e-test-generator.md",
       "promptTriggers": {
         "keywords": ["e2e test", "maestro", "detox", "end-to-end", "e2e", "generate test", "mobile test"],
         "intentPatterns": [
