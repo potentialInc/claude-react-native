@@ -505,6 +505,4 @@ maestro test --format junit e2e/flows/
 
 ## Related Files
 
-- [e2e-page-objects.md](e2e-page-objects.md) - Screen page object patterns
-- [e2e-fixtures.md](e2e-fixtures.md) - Test data management
-- [mobile-testing.md](../guides/mobile-testing.md) - Debugging guide
+- [mobile-testing.md](../../guides/mobile-testing.md) - Mobile testing guide
