@@ -56,6 +56,41 @@
           "(test|testing).*?(screen|flow|user|mobile)"
         ]
       }
+    },
+    "debugging": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "file": "debugging/fix-bug.md",
+      "promptTriggers": {
+        "keywords": ["fix bug", "debug", "react native error", "metro error", "expo error", "native module error", "crash", "red screen"],
+        "intentPatterns": [
+          "(fix|debug|solve|resolve).*?bug",
+          "(react native|metro|expo).*?error",
+          "troubleshoot.*?(issue|problem|error)",
+          "(app|screen).*?(crash|freeze|hang)"
+        ]
+      }
+    },
+    "code-quality": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "file": "code-quality/organize-types.md",
+      "promptTriggers": {
+        "keywords": ["organize types", "typescript types", "type organization", "screen types", "navigation types", "param list"],
+        "intentPatterns": [
+          "(organize|clean|refactor|centralize).*?types",
+          "type.*?(organization|structure|cleanup)",
+          "navigation.*?types"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/types/**/*.ts",
+          "**/types/**/*.d.ts"
+        ]
+      }
     }
   },
   "guides": {
