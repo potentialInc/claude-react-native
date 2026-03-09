@@ -1,5 +1,5 @@
 ---
-description: Build React Native app (Android APK / iOS Archive) with optional version bump
+description: Build React Native app locally (Android APK via Gradle / iOS Archive via Xcode) with optional version bump
 argument-hint: "[android|ios|both] [--bump patch|minor|major] [--version X.Y.Z] [--no-version]"
 ---
 
@@ -98,42 +98,67 @@ Read `{APP_DIR}/.env` and find the value of `EXPO_PUBLIC_API_URL`.
 
 ---
 
-## Phase 4: Version Update
+## Phase 4: Pre-Build Checks
+
+### 1. TypeScript Check
+
+```bash
+cd {APP_DIR} && npx tsc --noEmit
+```
+
+### 2. Lint Check
+
+```bash
+cd {APP_DIR} && npm run lint
+```
+
+If either check fails, report the errors and ask the user whether to continue or stop:
+- Use **AskUserQuestion**:
+  - Question: "Pre-build checks found issues (see errors above). Continue with build?"
+  - Options:
+    1. `Continue` — description: "Build anyway (not recommended for production)"
+    2. `Stop` — description: "Fix issues first"
+
+If user chooses "Stop", STOP execution.
+
+---
+
+## Phase 5: Version Update
 
 **Skip this phase entirely if user chose "No version update" or `--no-version`.**
 
 Read each file before editing. Apply edits in parallel where possible.
 
-### 4.1 `{APP_DIR}/package.json`
+### 5.1 `{APP_DIR}/package.json`
 ```
 Edit: "version": "CURRENT_VERSION" → "version": "NEW_VERSION"
 ```
 
-### 4.2 `{APP_DIR}/app.json`
+### 5.2 `{APP_DIR}/app.json`
 ```
 Edit: "version": "CURRENT_VERSION" → "version": "NEW_VERSION"
 ```
 
-### 4.3 `{PLIST_PATH}`
+### 5.3 `{PLIST_PATH}`
 Two edits:
 - `CFBundleShortVersionString`: `<string>CURRENT_VERSION</string>` → `<string>NEW_VERSION</string>`
 - `CFBundleVersion`: `<string>CURRENT_BUILD_NUMBER</string>` → `<string>NEW_BUILD_NUMBER</string>`
 
 **Note:** `CFBundleVersion` may be `1` if reset by `expo prebuild`. Check actual value before editing.
 
-### 4.4 `{GRADLE_PATH}`
+### 5.4 `{GRADLE_PATH}`
 Two edits:
 - `versionCode CURRENT_BUILD_NUMBER` → `versionCode NEW_BUILD_NUMBER`
 - `versionName "CURRENT_VERSION"` → `versionName "NEW_VERSION"`
 
-### 4.5 `{PBXPROJ_PATH}`
+### 5.5 `{PBXPROJ_PATH}`
 Two edits (use `replace_all: true` — there are 2 occurrences each for Debug/Release configs):
 - `MARKETING_VERSION = CURRENT_VERSION;` → `MARKETING_VERSION = NEW_VERSION;`
 - `CURRENT_PROJECT_VERSION = CURRENT_BUILD_NUMBER;` → `CURRENT_PROJECT_VERSION = NEW_BUILD_NUMBER;`
 
 **Note:** Values may be `1.0` / `1` if reset by `expo prebuild`. Check actual values before editing.
 
-### 4.6 Verify & Report
+### 5.6 Verify & Report
 
 After all edits, verify by grepping for the new version in each file. Print:
 ```
@@ -143,26 +168,26 @@ After all edits, verify by grepping for the new version in each file. Print:
 
 ---
 
-## Phase 5: Build Execution
+## Phase 6: Build Execution
 
 ### If `BUILD_PLATFORMS` is `both`:
 
 Launch **two parallel agents** (Agent tool, single message with two tool calls):
 
-- **Agent 1 — Android Build**: Execute Phase 5A instructions below. Provide all detected paths and version info in the agent prompt.
-- **Agent 2 — iOS Build**: Execute Phase 5B instructions below. Provide all detected paths and version info in the agent prompt.
+- **Agent 1 — Android Build**: Execute Phase 6A instructions below. Provide all detected paths and version info in the agent prompt.
+- **Agent 2 — iOS Build**: Execute Phase 6B instructions below. Provide all detected paths and version info in the agent prompt.
 
 ### If `BUILD_PLATFORMS` is `android`:
 
-Execute Phase 5A directly (no agent needed).
+Execute Phase 6A directly (no agent needed).
 
 ### If `BUILD_PLATFORMS` is `ios`:
 
-Execute Phase 5B directly (no agent needed).
+Execute Phase 6B directly (no agent needed).
 
 ---
 
-### Phase 5A: Android APK Build
+### Phase 6A: Android APK Build
 
 1. **Clean previous build:**
    ```bash
@@ -188,9 +213,9 @@ Execute Phase 5B directly (no agent needed).
 
 ---
 
-### Phase 5B: iOS Archive Build
+### Phase 6B: iOS Archive Build
 
-1. **Verify iOS version consistency** (only if version was NOT updated in Phase 4):
+1. **Verify iOS version consistency** (only if version was NOT updated in Phase 5):
 
    Read `{PLIST_PATH}`, `{PBXPROJ_PATH}`, and `{APP_DIR}/app.json` to check all version values match.
 
@@ -227,7 +252,7 @@ Execute Phase 5B directly (no agent needed).
 
 ---
 
-## Phase 6: Build Report
+## Phase 7: Build Report
 
 Print a final summary. Show only the platforms that were built.
 
@@ -271,3 +296,9 @@ Next Steps:
 | Android build failed | Show last 30 lines, suggest: check ANDROID_HOME, signing config, or try `-Dorg.gradle.jvmargs="-Xmx4g"` |
 | iOS archive failed | Show last 30 lines, suggest: check signing team (org not personal), run `pod install`, or clean build |
 | Build timeout | Inform user, suggest running manually with longer timeout |
+
+---
+
+## See Also
+- **EAS cloud builds**: Use `/rn-eas-build` for building via Expo Application Services (cloud-based, no local native toolchain required)
+- **iOS archive only**: Use `/rn-xcode-archive` for a focused iOS-only Xcode archive workflow (subset of Phase 6B above)

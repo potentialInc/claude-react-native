@@ -1,17 +1,29 @@
 ---
-description: Build React Native app using Expo for iOS/Android
+description: Build React Native app using EAS (Expo Application Services) cloud builds for iOS/Android
 argument-hint: "[platform: ios|android|all] [profile: development|preview|production]"
 ---
 
-# Mobile Build Command
+# EAS Cloud Build Command
 
-Build the React Native mobile app using Expo Application Services (EAS).
+Build the React Native mobile app using Expo Application Services (EAS) cloud builds.
 
 ## Prerequisites
 
 1. Expo CLI installed: `npm install -g expo-cli`
 2. EAS CLI installed: `npm install -g eas-cli`
 3. Authenticated with Expo: `eas login`
+
+---
+
+## Phase 0: Auto-Detect Project Structure
+
+Detect the project layout by finding `app.json`:
+
+1. **Find `app.json`** — search in order: `./app.json`, `frontend/app.json`, `mobile/app.json`, `app/app.json`
+2. **Set `APP_DIR`** = directory containing `app.json` (e.g., `frontend` or `.`)
+3. **Verify `eas.json`** exists in `{APP_DIR}/` — if not, warn that EAS may not be configured
+
+If `app.json` is not found, STOP and ask the user to provide the path to their React Native app directory.
 
 ---
 
@@ -35,19 +47,19 @@ Arguments: $ARGUMENTS
 ### 1. Verify Dependencies
 
 ```bash
-cd mobile && npm install
+cd {APP_DIR} && npm install
 ```
 
 ### 2. TypeScript Check
 
 ```bash
-cd mobile && npx tsc --noEmit
+cd {APP_DIR} && npx tsc --noEmit
 ```
 
 ### 3. Lint Check
 
 ```bash
-cd mobile && npm run lint
+cd {APP_DIR} && npm run lint
 ```
 
 If any checks fail, report errors and stop.
@@ -60,23 +72,23 @@ If any checks fail, report errors and stop.
 
 ```bash
 # iOS Simulator
-cd mobile && npx expo run:ios
+cd {APP_DIR} && npx expo run:ios
 
 # Android Emulator
-cd mobile && npx expo run:android
+cd {APP_DIR} && npx expo run:android
 ```
 
 ### EAS Build (Cloud)
 
 ```bash
 # iOS
-cd mobile && eas build --platform ios --profile {profile}
+cd {APP_DIR} && eas build --platform ios --profile {profile}
 
 # Android
-cd mobile && eas build --platform android --profile {profile}
+cd {APP_DIR} && eas build --platform android --profile {profile}
 
 # Both platforms
-cd mobile && eas build --platform all --profile {profile}
+cd {APP_DIR} && eas build --platform all --profile {profile}
 ```
 
 ---
@@ -115,7 +127,7 @@ Check:
 ### Metro Bundler Issues
 ```bash
 # Clear cache and restart
-cd mobile && npx expo start --clear
+cd {APP_DIR} && npx expo start --clear
 ```
 
 ---
@@ -123,3 +135,7 @@ cd mobile && npx expo start --clear
 ## Related Resources
 - [Expo Build Documentation](https://docs.expo.dev/build/introduction/)
 - [EAS Build Configuration](https://docs.expo.dev/build/eas-json/)
+
+## See Also
+- **Local native builds** (Gradle/Xcode): Use `/rn-local-build` for building APK/archive directly on your machine without EAS
+- **iOS archive only**: Use `/rn-xcode-archive` for a focused Xcode archive workflow

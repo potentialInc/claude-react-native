@@ -57,18 +57,43 @@
         ]
       }
     },
+    "unit-test-generator": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "file": "testing/unit-test-generator.md",
+      "promptTriggers": {
+        "keywords": ["unit test", "jest", "component test", "testing library", "write test", "create test", "test component", "test hook"],
+        "intentPatterns": [
+          "(create|generate|write|add).*?(unit test|component test|hook test)",
+          "(test|testing).*?(component|hook|screen|util|reducer|slice)"
+        ]
+      }
+    },
+    "test-mocking-patterns": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "file": "testing/test-mocking-patterns.md",
+      "promptTriggers": {
+        "keywords": ["mock", "mocking", "jest mock", "test setup", "jest setup", "test utility", "mock navigation", "mock redux"],
+        "intentPatterns": [
+          "(mock|stub|fake).*?(module|navigation|redux|query|http|storage)",
+          "(jest|test).*?(setup|config|utility|helper)"
+        ]
+      }
+    },
     "debugging": {
       "type": "domain",
       "enforcement": "suggest",
       "priority": "medium",
       "file": "debugging/fix-bug.md",
       "promptTriggers": {
-        "keywords": ["fix bug", "debug", "react native error", "metro error", "expo error", "native module error", "crash", "red screen"],
+        "keywords": ["fix bug", "debug", "react native error", "metro error", "expo error", "native module error", "red screen"],
         "intentPatterns": [
           "(fix|debug|solve|resolve).*?bug",
           "(react native|metro|expo).*?error",
-          "troubleshoot.*?(issue|problem|error)",
-          "(app|screen).*?(crash|freeze|hang)"
+          "troubleshoot.*?(issue|problem|error)"
         ]
       }
     },
@@ -98,7 +123,35 @@
         ]
       }
     },
-    "code-quality": {
+    "crash-handler": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "file": "debugging/crash-handler.md",
+      "promptTriggers": {
+        "keywords": ["crash", "error boundary", "app crash", "fatal error", "sentry", "crashlytics", "crash report", "crash log"],
+        "intentPatterns": [
+          "(app|screen).*?(crash|freeze|hang|kill)",
+          "(error boundary|crash report|crash log).*?(setup|implement|add|read)",
+          "(sentry|crashlytics).*?(setup|integrate|configure)"
+        ]
+      }
+    },
+    "performance-debugger": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "file": "debugging/performance-debugger.md",
+      "promptTriggers": {
+        "keywords": ["slow", "performance", "lag", "jank", "memory leak", "frame drop", "optimize", "bundle size", "re-render"],
+        "intentPatterns": [
+          "(slow|lag|jank|freeze).*?(app|screen|list|scroll|animation)",
+          "(optimize|improve|fix).*?(performance|speed|memory|bundle)",
+          "(memory|bundle).*?(leak|size|analysis|profile)"
+        ]
+      }
+    },
+    "organize-types": {
       "type": "domain",
       "enforcement": "suggest",
       "priority": "medium",
@@ -117,6 +170,73 @@
           "**/types/**/*.d.ts"
         ]
       }
+    },
+    "code-review-checklist": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "file": "code-quality/code-review-checklist.md",
+      "promptTriggers": {
+        "keywords": ["code review", "review code", "pr review", "pull request review", "quality check", "code quality", "audit code"],
+        "intentPatterns": [
+          "(review|audit|check).*?(code|pr|pull request|quality|file)",
+          "(code|pr).*?(review|quality|audit|check)"
+        ]
+      }
+    },
+    "refactor-component": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "file": "code-quality/refactor-component.md",
+      "promptTriggers": {
+        "keywords": ["refactor", "clean up", "split component", "extract hook", "simplify", "reduce complexity", "migrate stylesheet"],
+        "intentPatterns": [
+          "(refactor|clean|split|extract|simplify).*?(component|hook|screen|code)",
+          "(migrate|convert).*?(stylesheet|touchable|redux to query)"
+        ]
+      }
+    },
+    "design-system-setup": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "file": "ui-design/design-system-setup.md",
+      "promptTriggers": {
+        "keywords": ["design system", "theme", "dark mode", "light mode", "color scheme", "design tokens", "theming", "component library"],
+        "intentPatterns": [
+          "(setup|create|build).*?(design system|theme|component library)",
+          "(dark|light).*?mode.*?(add|implement|toggle|support)",
+          "(design|color).*?(tokens|scheme|palette)"
+        ]
+      }
+    },
+    "accessible-component": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "file": "ui-design/accessible-component.md",
+      "promptTriggers": {
+        "keywords": ["accessibility", "a11y", "screen reader", "voiceover", "talkback", "accessible", "wcag", "accessibilityLabel", "accessibilityRole"],
+        "intentPatterns": [
+          "(make|add|improve|check).*?(accessible|accessibility|a11y)",
+          "(screen reader|voiceover|talkback).*?(support|test|fix)",
+          "(wcag|contrast|touch target).*?(comply|check|fix)"
+        ]
+      }
+    },
+    "glassmorphism-component": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "low",
+      "file": "development/glassmorphism-component.md",
+      "promptTriggers": {
+        "keywords": ["glassmorphism", "frosted glass", "glass effect", "blur card", "transparent blur", "glass ui", "liquid glass", "expo-blur", "BlurView"],
+        "intentPatterns": [
+          "(create|build|implement).*?(glass|blur|frosted).*?(component|card|modal|effect)",
+          "(glassmorphism|glass effect).*?(react native|expo|mobile)"
+        ]
+      }
     }
   },
   "guides": {
@@ -132,7 +252,13 @@
     "performance": "../guides/performance.md",
     "file-organization": "../guides/file-organization.md",
     "typescript-standards": "../guides/typescript-standards.md",
-    "mobile-testing": "../guides/mobile-testing.md"
+    "mobile-testing": "../guides/mobile-testing.md",
+    "unit-testing": "../guides/unit-testing.md",
+    "accessibility": "../guides/accessibility.md",
+    "error-handling": "../guides/error-handling.md",
+    "animations": "../guides/animations.md",
+    "environment-config": "../guides/environment-config.md",
+    "deep-linking": "../guides/deep-linking.md"
   },
   "docs": {
     "_note": "Documentation files in ../docs/",
