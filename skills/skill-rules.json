@@ -30,6 +30,20 @@
         ]
       }
     },
+    "import-icons": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "file": "converters/import-icons.md",
+      "promptTriggers": {
+        "keywords": ["import icons", "figma icons", "svg icons", "download icons", "icon assets", "figma export", "svg export"],
+        "intentPatterns": [
+          "(import|download|export|fetch).*?(icons|svg).*?(figma)",
+          "figma.*?(icons|svg|assets).*?(import|download|export)",
+          "(icon|svg).*?(assets|files).*?(figma|export|download)"
+        ]
+      }
+    },
     "html-to-react-native": {
       "type": "domain",
       "enforcement": "suggest",
