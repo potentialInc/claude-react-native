@@ -72,6 +72,32 @@
         ]
       }
     },
+    "apple-sign-in-expo": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "file": "auth/apple-sign-in-expo.md",
+      "promptTriggers": {
+        "keywords": ["apple sign in", "apple login", "apple auth", "sign in with apple", "apple oauth", "apple identity"],
+        "intentPatterns": [
+          "(implement|add|setup|configure).*?apple.*?(sign.?in|login|auth)",
+          "apple.*?(oauth|identity|authentication)"
+        ]
+      }
+    },
+    "push-notifications-expo": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "file": "notifications/push-notifications-expo.md",
+      "promptTriggers": {
+        "keywords": ["push notification", "fcm", "firebase messaging", "notification", "remote notification", "local notification", "expo notification"],
+        "intentPatterns": [
+          "(implement|add|setup|configure).*?(push|notification|fcm|firebase.*?messaging)",
+          "(notification|fcm).*?(service|provider|handler|channel)"
+        ]
+      }
+    },
     "code-quality": {
       "type": "domain",
       "enforcement": "suggest",
