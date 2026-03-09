@@ -138,4 +138,4 @@ cd {APP_DIR} && npx expo start --clear
 
 ## See Also
 - **Local native builds** (Gradle/Xcode): Use `/rn-local-build` for building APK/archive directly on your machine without EAS
-- **iOS archive only**: Use `/rn-xcode-archive` for a focused Xcode archive workflow
+- **Local iOS archive**: Use `/rn-local-build ios` for building an Xcode archive locally

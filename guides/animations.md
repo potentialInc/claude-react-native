@@ -714,4 +714,4 @@ function AnimatedFlatList<T>({ data, renderItem }: AnimatedFlatListProps<T>) {
 
 - [Performance Guide](./performance.md) — general performance optimization
 - [Styling Guide](./styling-guide.md) — NativeWind and design tokens
-- [Design System Setup Skill](../skills/development/design-system-setup.md) — building a component library
+- [Design System Setup Skill](../skills/ui-design/design-system-setup.md) — building a component library

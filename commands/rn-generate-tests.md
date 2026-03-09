@@ -235,7 +235,7 @@ npx jest path/to/__tests__/TargetFile.test.tsx --verbose
 
 ## Related Resources
 
-- [unit-test-generator.md](../skills/e2e-testing/unit-test-generator.md)
+- [unit-test-generator.md](../skills/testing/unit-test-generator.md)
 - [e2e-test-generator.md](../skills/e2e-testing/e2e-test-generator.md)
-- [test-mocking-patterns.md](../skills/e2e-testing/test-mocking-patterns.md)
+- [test-mocking-patterns.md](../skills/testing/test-mocking-patterns.md)
 - [mobile-testing.md](../guides/mobile-testing.md)

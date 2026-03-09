@@ -192,5 +192,5 @@ Scan for non-obvious interactive elements without `accessibilityHint`:
 
 ## Related Resources
 
-- [accessible-component.md](../skills/development/accessible-component.md)
+- [accessible-component.md](../skills/ui-design/accessible-component.md)
 - [common-patterns.md](../guides/common-patterns.md)

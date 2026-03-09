@@ -162,6 +162,6 @@ await act(async () => {
 
 ## Related Resources
 
-- [unit-test-generator.md](../skills/e2e-testing/unit-test-generator.md)
-- [test-mocking-patterns.md](../skills/e2e-testing/test-mocking-patterns.md)
+- [unit-test-generator.md](../skills/testing/unit-test-generator.md)
+- [test-mocking-patterns.md](../skills/testing/test-mocking-patterns.md)
 - [mobile-testing.md](../guides/mobile-testing.md)

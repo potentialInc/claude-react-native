@@ -569,5 +569,5 @@ it('should announce errors to screen readers', async () => {
 
 ## Related Resources
 
-- [Accessible Component Skill](../skills/development/accessible-component.md) — building accessible components
+- [Accessible Component Skill](../skills/ui-design/accessible-component.md) — building accessible components
 - [Component Patterns Guide](./component-patterns.md) — reusable component architecture
